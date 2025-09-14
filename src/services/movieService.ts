@@ -1,7 +1,7 @@
 import axios from "axios";
-import type { Movie, MoviesResponse } from "../types/movie";
+import type { Movie } from "../types/movie";
 
-interface httpResponse {
+interface TMDBResponse {
   results: Movie[];
   total_pages: number;
   total_results: number;
@@ -15,15 +15,20 @@ const apiClient = axios.create({
   },
 });
 
+export interface MoviesResponse {
+  movies: Movie[];
+  totalPages: number;
+}
+
 export const fetchMovies = async (
   query: string,
   page: number
 ): Promise<MoviesResponse> => {
-  const response = await apiClient.get<httpResponse>("/search/movie", {
+  const { data } = await apiClient.get<TMDBResponse>("/search/movie", {
     params: { query, page },
   });
   return {
-    movies: response.data.results,
-    totalPages: response.data.total_pages,
+    movies: data.results,
+    totalPages: data.total_pages,
   };
 };
